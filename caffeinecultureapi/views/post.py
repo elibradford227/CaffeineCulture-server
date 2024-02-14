@@ -83,7 +83,7 @@ class PostView(ViewSet):
         """
         post = Post.objects.get(pk=pk)
         post.delete()
-        return response(None, status=status.HTTP_204_NO_CONTENT)
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
         
 
 class PostSerializer(serializers.ModelSerializer):

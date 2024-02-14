@@ -17,10 +17,11 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
 from rest_framework import routers
-from caffeinecultureapi.views import check_user, register_user, PostView
+from caffeinecultureapi.views import check_user, register_user, PostView, CommentView
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'posts', PostView, 'posts')
+router.register(r'comments', CommentView, 'comments')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
