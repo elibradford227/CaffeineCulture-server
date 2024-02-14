@@ -1,0 +1,30 @@
+[
+  {
+      "model": "caffeinecultureapi.category",
+      "pk": 1,
+      "fields": {
+          "name": "Fun Fact"
+      }
+  },
+  {
+      "model": "caffeinecultureapi.category",
+      "pk": 2,
+      "fields": {
+          "name": "Question/Help"
+      }
+  },
+  {
+      "model": "caffeinecultureapi.category",
+      "pk": 3,
+      "fields": {
+          "name": "Gear Talk"
+      }
+  },
+  {
+    "model": "caffeinecultureapi.category",
+    "pk": 3,
+    "fields": {
+        "name": "Discussion"
+    }
+}
+]

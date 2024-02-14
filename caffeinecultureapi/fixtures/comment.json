@@ -1,0 +1,22 @@
+[
+  {
+      "model": "caffeinecultureapi.comment",
+      "pk": 1,
+      "fields": {
+          "user": 1,  
+          "post": 1,  
+          "content": "This is the content of the first comment.",
+          "date": "2022-02-13T12:00:00Z"
+      }
+  },
+  {
+      "model": "caffeinecultureapi.comment",
+      "pk": 2,
+      "fields": {
+          "user": 2,  
+          "post": 1,  
+          "content": "Content for the second comment.",
+          "date": "2022-02-14T12:00:00Z"
+      }
+  }
+]

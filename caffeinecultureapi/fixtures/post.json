@@ -1,0 +1,26 @@
+[
+  {
+      "model": "caffeinecultureapi.post",
+      "pk": 1,
+      "fields": {
+          "title": "First Post",
+          "content": "This is the content of the first post.",
+          "date": "2022-02-13T12:00:00Z",
+          "like_count": 0,
+          "category": 1,  
+          "user": 1       
+      }
+  },
+  {
+      "model": "caffeinecultureapi.post",
+      "pk": 2,
+      "fields": {
+          "title": "Second Post",
+          "content": "Content for the second post.",
+          "date": "2022-02-14T12:00:00Z",
+          "like_count": 0,
+          "category": 2,  
+          "user": 2       
+      }
+  }
+]
