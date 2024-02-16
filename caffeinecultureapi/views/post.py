@@ -29,6 +29,8 @@ class PostView(ViewSet):
             Response -- JSON serialized list of posts
         """
         post = Post.objects.all()
+        # Retrieves UID passed through headers
+        uid = request.META['HTTP_AUTHORIZATION']
         serializer = PostSerializer(post, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
       

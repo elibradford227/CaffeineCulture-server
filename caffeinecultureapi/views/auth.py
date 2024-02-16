@@ -40,7 +40,8 @@ def register_user(request):
 
     user = User.objects.create(
         uid=request.data['uid'],
-        username=request.data['username']
+        username=request.data['username'],
+        bio=request.data['bio']
     )
 
     # Return the user info to the client
@@ -48,5 +49,6 @@ def register_user(request):
         'id': user.id,
         'uid': user.uid,
         'username': user.username,
+        'bio': user.bio
     }
     return Response(data)

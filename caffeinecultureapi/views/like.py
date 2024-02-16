@@ -46,9 +46,9 @@ class LikeView(ViewSet):
             return Response('User has already liked post', status=status.HTTP_403_FORBIDDEN)
         else:
             like = Like.objects.create(
-              user = user,
-              post = post,
-          )
+                user = user,
+                post = post,
+            )
 
         serializer = LikeSerializer(like, many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
