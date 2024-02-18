@@ -3,7 +3,9 @@ from django.db.models import Count
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
-from caffeinecultureapi.models import Post, User, Category
+from caffeinecultureapi.models import Post, User, Category, Like
+from django.db.models import Count, Value, BooleanField
+from .comment import CommentSerializer
 
 class PostView(ViewSet):
     """Level up post view"""
@@ -14,8 +16,21 @@ class PostView(ViewSet):
         Returns:
             Response -- JSON serialized post
         """
+        
+        uid = request.META['HTTP_AUTHORIZATION']
+        
+        user = User.objects.get(uid=uid)
+        
         try:
             post = Post.objects.get(pk=pk)
+            
+            likes = Like.objects.filter(post = post.pk)
+            post.like_count += len(likes)
+            
+            liked = Like.objects.filter(post=post, user=user).exists()
+            
+            post.liked = liked
+                
             serializer = PostSerializer(post, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Post.DoesNotExist as ex:
@@ -28,10 +43,21 @@ class PostView(ViewSet):
         Returns:
             Response -- JSON serialized list of posts
         """
-        post = Post.objects.all()
+        posts = Post.objects.all()
         # Retrieves UID passed through headers
         uid = request.META['HTTP_AUTHORIZATION']
-        serializer = PostSerializer(post, many=True)
+        
+        user = User.objects.get(uid=uid)
+        
+        for post in posts:
+            likes = Like.objects.filter(post = post.pk)
+            post.like_count += len(likes)
+            
+            liked = Like.objects.filter(post=post, user=user).exists()
+            
+            post.liked = liked
+            
+        serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
       
     def create(self, request):
@@ -92,8 +118,9 @@ class PostSerializer(serializers.ModelSerializer):
     """JSON serializer for posts
 
     """
+    comments = CommentSerializer(many=True, read_only=True)
     class Meta:
         model = Post
-        fields = ('id', 'title', 'content', 'date', 'like_count', 'category', 'user')
+        fields = ('id', 'title', 'content', 'date', 'like_count', 'category', 'user', 'comments', 'liked')
         depth = 1
         
