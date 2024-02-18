@@ -17,9 +17,16 @@ class PostView(ViewSet):
             Response -- JSON serialized post
         """
         
+        # Retrieves UID passed through headers
         uid = request.META['HTTP_AUTHORIZATION']
         
-        user = User.objects.get(uid=uid)
+        if not uid:
+            return Response({"error": "Authorization header is missing"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            user = User.objects.get(uid=uid)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
         
         try:
             post = Post.objects.get(pk=pk)
@@ -43,11 +50,18 @@ class PostView(ViewSet):
         Returns:
             Response -- JSON serialized list of posts
         """
-        posts = Post.objects.all()
         # Retrieves UID passed through headers
         uid = request.META['HTTP_AUTHORIZATION']
         
-        user = User.objects.get(uid=uid)
+        if not uid:
+            return Response({"error": "Authorization header is missing"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            user = User.objects.get(uid=uid)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        posts = Post.objects.all()
         
         for post in posts:
             likes = Like.objects.filter(post = post.pk)
