@@ -85,14 +85,14 @@ class LikeView(ViewSet):
         like.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
     
-    @action(methods=['get', 'delete'], detail=True)
-    def delete_like(self, request, pk):
+    @action(methods=['get', 'delete'], detail=False)
+    def delete_like(self, request, pk=None):
         """Deletes Like. Designed for deleting from front end
         Returns:
             Response: Success message with 204 code
         """
-        user=User.objects.get(user=request.data["uid"])
-        post=Post.objects.get(post=request.data["post"])
+        user=User.objects.get(uid=request.data["uid"])
+        post=Post.objects.get(pk=request.data["post"])
         
         like = Like.objects.get(user=user, post=post)
         like.delete()
