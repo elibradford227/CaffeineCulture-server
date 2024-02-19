@@ -91,12 +91,19 @@ class LikeView(ViewSet):
         Returns:
             Response: Success message with 204 code
         """
-        user=User.objects.get(uid=request.data["uid"])
-        post=Post.objects.get(pk=request.data["post"])
+        try:
+            user=User.objects.get(uid=request.data["uid"])
+            post=Post.objects.get(pk=request.data["post"])
         
-        like = Like.objects.get(user=user, post=post)
-        like.delete()
-        return Response('Like successfully deleted', status=status.HTTP_204_NO_CONTENT)
+            like = Like.objects.get(user=user, post=post)
+            like.delete()
+            return Response('Like successfully deleted', status=status.HTTP_204_NO_CONTENT)
+        except User.DoesNotExist:
+            return Response('User not found', status=status.HTTP_404_NOT_FOUND)
+        except Post.DoesNotExist:
+            return Response('Post not found', status=status.HTTP_404_NOT_FOUND)
+        except Like.DoesNotExist:
+            return Response('Like not found', status=status.HTTP_404_NOT_FOUND)
         
 
 class LikeSerializer(serializers.ModelSerializer):
