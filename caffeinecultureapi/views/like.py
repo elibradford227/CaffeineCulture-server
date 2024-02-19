@@ -1,7 +1,8 @@
 from django.http import HttpResponseServerError
-from django.db.models import Count
+from django.db.models import Count, F
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework import serializers, status
 from caffeinecultureapi.models import Post, User, Like
 
@@ -83,6 +84,26 @@ class LikeView(ViewSet):
         like = Like.objects.get(pk=pk)
         like.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
+    
+    @action(methods=['get', 'delete'], detail=False)
+    def delete_like(self, request, pk=None):
+        """Deletes Like. Designed for deleting from front end
+        Returns:
+            Response: Success message with 204 code
+        """
+        try:
+            user=User.objects.get(uid=request.data["uid"])
+            post=Post.objects.get(pk=request.data["post"])
+        
+            like = Like.objects.get(user=user, post=post)
+            like.delete()
+            return Response('Like successfully deleted', status=status.HTTP_204_NO_CONTENT)
+        except User.DoesNotExist:
+            return Response('User not found', status=status.HTTP_404_NOT_FOUND)
+        except Post.DoesNotExist:
+            return Response('Post not found', status=status.HTTP_404_NOT_FOUND)
+        except Like.DoesNotExist:
+            return Response('Like not found', status=status.HTTP_404_NOT_FOUND)
         
 
 class LikeSerializer(serializers.ModelSerializer):
