@@ -61,7 +61,7 @@ class PostView(ViewSet):
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
         
-        posts = Post.objects.all()
+        posts = Post.objects.order_by('-id')
         
         for post in posts:
             likes = Like.objects.filter(post = post.pk)
