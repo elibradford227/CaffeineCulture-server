@@ -135,7 +135,7 @@ class PostView(ViewSet):
             Response: Success message with 204 code
         """
         
-         # Retrieves UID passed through headers
+        # Retrieves UID passed through headers
         uid = request.META['HTTP_AUTHORIZATION']
         
         if not uid:
