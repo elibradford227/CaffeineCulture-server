@@ -22,6 +22,7 @@ def check_user(request):
             'id': user.id,
             'uid': user.uid,
             'username': user.username,
+            'bio': user.bio
         }
         return Response(data)
     else:
