@@ -22,6 +22,7 @@ def check_user(request):
             'id': user.id,
             'uid': user.uid,
             'username': user.username,
+            'bio': user.bio
         }
         return Response(data)
     else:
@@ -52,3 +53,23 @@ def register_user(request):
         'bio': user.bio
     }
     return Response(data)
+
+@api_view(['POST'])
+def get_user_by_name(request):
+    username = request.data['username']
+
+    user = User.objects.filter(username=username).first()
+    
+    # If authentication was successful, respond with their token
+    if user is not None:
+        data = {
+            'id': user.id,
+            'uid': user.uid,
+            'username': user.username,
+            'bio': user.bio
+        }
+        return Response(data)
+    else:
+        # Bad login details were provided. So we can't log the user in.
+        data = { 'valid': False }
+        return Response(data)

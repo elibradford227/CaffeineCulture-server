@@ -3,6 +3,7 @@ from django.db.models import Count
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
+from rest_framework.decorators import action
 from caffeinecultureapi.models import Post, User, Category, Like
 from django.db.models import Count, Value, BooleanField
 from .comment import CommentSerializer
@@ -126,7 +127,39 @@ class PostView(ViewSet):
         post = Post.objects.get(pk=pk)
         post.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
+    
+    @action(methods=['get'], detail=False)
+    def get_user_posts(self, request):
+        """Returns a single users posts 
+        Returns:
+            Response: Success message with 204 code
+        """
         
+        # Retrieves UID passed through headers
+        uid = request.META['HTTP_AUTHORIZATION']
+        
+        if not uid:
+            return Response({"error": "Authorization header is missing"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            user = User.objects.get(uid=uid)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+
+        posts = Post.objects.filter(user=user).order_by('-id')
+
+        
+        for post in posts:
+            likes = Like.objects.filter(post = post.pk)
+            post.like_count += len(likes)
+            
+            liked = Like.objects.filter(post=post, user=user).exists()
+            
+            post.liked = liked
+            
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class PostSerializer(serializers.ModelSerializer):
     """JSON serializer for posts

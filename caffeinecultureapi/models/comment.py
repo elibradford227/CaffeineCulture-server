@@ -10,8 +10,7 @@ class Comment(models.Model):
     parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True, related_name='children')
     
     def get_children(self):
-        children = list()
-        children.append(self)
+        children = [self]
         for child in self.children.all():
             children.extend(child.get_children())
         return children
