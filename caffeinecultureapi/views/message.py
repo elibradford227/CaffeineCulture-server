@@ -1,5 +1,5 @@
 from django.http import HttpResponseServerError
-from django.db.models import Count, F
+from django.db.models import Count, F, Q
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -86,7 +86,7 @@ class MessageView(ViewSet):
         return Response(None, status=status.HTTP_204_NO_CONTENT)
       
     @action(methods=['get'], detail=False)
-    def get_conversation(self, request, pk):
+    def get_conversation(self, request):
       """Returns conversation history between two users
         Returns:
             Response: Serialized data with 200 OK
@@ -95,7 +95,7 @@ class MessageView(ViewSet):
       sender=User.objects.get(uid=request.data["sender_uid"])
       receiver=User.objects.get(uid=request.data["receiver_uid"])
       
-      messages = Message.objects.filter(sender=sender, receiver=receiver)
+      messages = Message.objects.filter(Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender)).order_by('date')
       
       serializer = MessageSerializer(messages, many=True)
       return Response(serializer.data, status=status.HTTP_200_OK)
