@@ -8,13 +8,6 @@ from caffeinecultureapi.models import Post, User, Category, Comment
 
 class CommentView(ViewSet):
     """Level up comment view"""
-    
-    # def __serialize_nested__(self, comment):
-    #     serialized_list = []
-    #     serialized = CommentSerializer(comment, many=True).data
-    #     serialized_list.append(serialized)
-    #     for child in 
-    #     return serialized_list
 
     def retrieve(self, request, pk):
         """Handle GET requests for single comments

@@ -3,3 +3,4 @@ from .post import Post
 from .comment import Comment
 from .like import Like
 from .category import Category
+from .message import Message
