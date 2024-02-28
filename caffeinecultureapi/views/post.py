@@ -132,7 +132,7 @@ class PostView(ViewSet):
     def get_user_posts(self, request):
         """Returns a single users posts 
         Returns:
-            Response: Success message with 204 code
+            Response: Serialized data with 200 OK
         """
         
         # Retrieves UID passed through headers

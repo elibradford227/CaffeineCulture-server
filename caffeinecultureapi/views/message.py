@@ -84,7 +84,22 @@ class MessageView(ViewSet):
         message = Message.objects.get(pk=pk)
         message.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
+      
+    @action(methods=['get'], detail=False)
+    def get_conversation(self, request, pk):
+      """Returns conversation history between two users
+        Returns:
+            Response: Serialized data with 200 OK
+        """
         
+      sender=User.objects.get(uid=request.data["sender_uid"])
+      receiver=User.objects.get(uid=request.data["receiver_uid"])
+      
+      messages = Message.objects.filter(sender=sender, receiver=receiver)
+      
+      serializer = MessageSerializer(messages, many=True)
+      return Response(serializer.data, status=status.HTTP_200_OK)
+      
 
 class MessageSerializer(serializers.ModelSerializer):
     """JSON serializer for messages
