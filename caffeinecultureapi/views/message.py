@@ -46,7 +46,8 @@ class MessageView(ViewSet):
 
         message = Message.objects.create(
             sender = sender,
-            receiver = receiver
+            receiver = receiver,
+            content = request.data["content"]
         )
 
         serializer = MessageSerializer(message, many=False)
