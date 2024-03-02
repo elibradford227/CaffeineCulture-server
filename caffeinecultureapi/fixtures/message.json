@@ -1,0 +1,32 @@
+[
+  {
+      "model": "caffeinecultureapi.message",
+      "pk": 1,
+      "fields": {
+          "sender": 4,  
+          "receiver": 6,
+          "content": "Message from eli (4) to Ryan (6)",
+          "date": "2022-02-13T12:00:00Z"
+      }
+  },
+  {
+      "model": "caffeinecultureapi.message",
+      "pk": 2,
+      "fields": {
+          "sender": 6,  
+          "receiver": 4,
+          "content": "Message from Ryan (6) to eli (4)",
+          "date": "2022-02-13T12:00:00Z"
+      }
+  },
+  {
+    "model": "caffeinecultureapi.message",
+    "pk": 3,
+    "fields": {
+        "sender": 7,  
+        "receiver": 1,
+        "content": "Message from drt (7) to first user (1)",
+        "date": "2022-02-13T12:00:00Z"
+    }
+  }
+]
