@@ -84,22 +84,22 @@ class MessageView(ViewSet):
         message = Message.objects.get(pk=pk)
         message.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
-      
-    @action(methods=['get'], detail=False)
+
+    @action(methods=['post'], detail=False)
     def get_conversation(self, request):
-      """Returns conversation history between two users
-        Returns:
-            Response: Serialized data with 200 OK
-        """
+        """Returns conversation history between two users
+            Returns:
+                Response: Serialized data with 200 OK
+            """
+            
+        sender=User.objects.get(uid=request.data["sender_uid"])
+        receiver=User.objects.get(uid=request.data["receiver_uid"])
         
-      sender=User.objects.get(uid=request.data["sender_uid"])
-      receiver=User.objects.get(uid=request.data["receiver_uid"])
-      
-      messages = Message.objects.filter(Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender)).order_by('date')
-      
-      serializer = MessageSerializer(messages, many=True)
-      return Response(serializer.data, status=status.HTTP_200_OK)
-      
+        messages = Message.objects.filter(Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender)).order_by('date')
+        
+        serializer = MessageSerializer(messages, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class MessageSerializer(serializers.ModelSerializer):
     """JSON serializer for messages
@@ -108,5 +108,6 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ('id', 'sender', 'receiver', 'content', 'date')
+        depth = 1
 
         
