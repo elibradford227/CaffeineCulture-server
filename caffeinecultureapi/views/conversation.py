@@ -37,11 +37,16 @@ class ConversationView(ViewSet):
         """Handle conversation operations
 
         Returns
-          Response -- JSON serialized conversation instance
+           Response -- JSON serialized conversation instance
         """
         
         user_one=User.objects.get(uid=request.data["one_uid"])
         user_two=User.objects.get(uid=request.data["two_uid"])
+        
+        exists = Conversation.objects.filter(participants=user_one).filter(participants=user_two).exists()
+        
+        if exists: 
+            return Response({"error": "Conversation already exists"}, status=status.HTTP_400_BAD_REQUEST)
         
         conversation = Conversation.objects.create()
         
