@@ -5,3 +5,4 @@ from .category import CategoryView
 from .like import LikeView
 from .comment import CommentSerializer
 from .message import MessageView
+from .conversation import ConversationView
