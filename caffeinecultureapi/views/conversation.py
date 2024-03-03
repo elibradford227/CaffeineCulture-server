@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from rest_framework import serializers, status
 from caffeinecultureapi.models import Post, User, Conversation
 
-class conversationView(ViewSet):
+class ConversationView(ViewSet):
     """Level up conversation view"""
 
     def retrieve(self, request, pk):
@@ -60,6 +60,19 @@ class conversationView(ViewSet):
         conversation = Conversation.objects.get(pk=pk)
         conversation.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
+    
+    @action(methods=['get'], detail='True')
+    def get_users_conversations(self, request, pk):
+        """Returns a list of all users conversations
+        Returns:
+            Response: Success message with 200 code
+        """
+        user = User.objects.get(pk=pk)
+        
+        conversations = Conversation.objects.filter(participants=user).order_by('-id')
+        
+        serializer = ConversationSerializer(conversations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
