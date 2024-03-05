@@ -67,10 +67,8 @@ class CommentView(ViewSet):
         )
         
         if (user != poster):
-            response = NotificationView().create_post_notification(post, user, poster)
+            NotificationView().create_post_notification(post, user, poster)
         
-            print(response.data)
-
         serializer = CommentSerializer(comment, many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
@@ -128,9 +126,7 @@ class CommentView(ViewSet):
             )
             
             if (user != parent):
-                response = NotificationView().create_reply_notification(parent_comment, user, parent)
-            
-                print(response.data)
+                NotificationView().create_reply_notification(parent_comment, user, parent)
 
             serializer = CommentSerializer(comment, many=False)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
