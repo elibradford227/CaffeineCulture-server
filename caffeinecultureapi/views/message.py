@@ -4,6 +4,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import serializers, status
+from .notification import NotificationView
 from caffeinecultureapi.models import Post, User, Message
 
 class MessageView(ViewSet):
@@ -37,7 +38,7 @@ class MessageView(ViewSet):
         """Handle message operations
 
         Returns
-          Response -- JSON serialized message instance
+            Response -- JSON serialized message instance
         """
         
         sender=User.objects.get(uid=request.data["sender_uid"])
@@ -49,6 +50,9 @@ class MessageView(ViewSet):
             receiver = receiver,
             content = request.data["content"]
         )
+        
+        NotificationView().create_message_notification(message, receiver, sender)
+        
 
         serializer = MessageSerializer(message, many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -57,7 +61,7 @@ class MessageView(ViewSet):
         """Handle PUT requests for a message
 
         Returns:
-          Response -- Empty body with 204 status code
+            Response -- Empty body with 204 status code
         """
 
         message = Message.objects.get(pk=pk)
