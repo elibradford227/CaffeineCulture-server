@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
 from rest_framework import routers
-from caffeinecultureapi.views import check_user, register_user, PostView, CommentView, CategoryView, LikeView, get_user_by_name, MessageView, ConversationView
+from caffeinecultureapi.views import check_user, register_user, PostView, CommentView, CategoryView, LikeView, get_user_by_name, MessageView, ConversationView, NotificationView
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'posts', PostView, 'posts')
@@ -26,6 +26,7 @@ router.register(r'categories', CategoryView, 'categories')
 router.register(r'likes', LikeView, 'likes')
 router.register(r'messages', MessageView, 'messages')
 router.register(r'conversations', ConversationView, 'conversations')
+router.register(r'notifications', NotificationView, 'notifications')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

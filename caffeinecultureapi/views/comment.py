@@ -4,6 +4,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import serializers, status
+from .notification import NotificationView
 from caffeinecultureapi.models import Post, User, Category, Comment
 
 class CommentView(ViewSet):
@@ -56,12 +57,19 @@ class CommentView(ViewSet):
         
         user=User.objects.get(uid=request.data["uid"])
         post=Post.objects.get(pk=request.data["post"])
+         
+        poster = User.objects.get(id=post.user_id)
         
         comment = Comment.objects.create(
             user = user,
             post = post,
             content = request.data["content"]
         )
+        
+        if (user != poster):
+            response = NotificationView().create_post_notification(post, user, poster)
+        
+            print(response.data)
 
         serializer = CommentSerializer(comment, many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -107,6 +115,8 @@ class CommentView(ViewSet):
         try:
             parent_comment = Comment.objects.get(pk=pk)
             
+            parent = User.objects.get(id=parent_comment.user.id)
+            
             user=User.objects.get(uid=request.data["uid"])
             post=Post.objects.get(pk=request.data["post"])
         
@@ -116,6 +126,11 @@ class CommentView(ViewSet):
                 content = request.data["content"],
                 parent = parent_comment
             )
+            
+            if (user != parent):
+                response = NotificationView().create_reply_notification(parent_comment, user, parent)
+            
+                print(response.data)
 
             serializer = CommentSerializer(comment, many=False)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
