@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
 from rest_framework import routers
-from caffeinecultureapi.views import check_user, register_user, PostView, CommentView, CategoryView, LikeView, get_user_by_name, MessageView, ConversationView, NotificationView
+from caffeinecultureapi.views import check_user, register_user, PostView, CommentView, CategoryView, LikeView, get_user_by_name, MessageView, ConversationView, NotificationView, get_user_by_id
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'posts', PostView, 'posts')
@@ -34,4 +34,5 @@ urlpatterns = [
     path('register', register_user),
     path('checkuser', check_user),
     path('get_user_by_name', get_user_by_name),
+    path('get_user_by_id', get_user_by_id),
 ]
