@@ -86,7 +86,49 @@ class NotificationView(ViewSet):
         notification = Notification.objects.get(pk=pk)
         notification.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
-      
+    
+    @action(methods=['get'], detail=False)
+    def get_users_notifications(self, request):
+        """
+        Returns:
+            Response: Success message with 200 code
+        """
+        # Retrieves UID passed through headers
+        uid = request.META['HTTP_AUTHORIZATION']
+        
+        if not uid:
+            return Response({"error": "Authorization header is missing"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            user = User.objects.get(uid=uid)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        
+        notifications = Notification.objects.filter(user=user).order_by("-date")
+
+        serializer = NotificationSerializer(notifications, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(methods=['get', 'patch'], detail=True)
+    def mark_notification_read(self, request, pk):
+        """
+        Returns:
+            Response: Success message with 200 code
+        """
+
+        try:
+            notification = Notification.objects.get(pk=pk)
+        except Notification.DoesNotExist:
+            return Response({"error": "Notification not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        notification.is_read = True
+        
+        notification.save()
+        
+        serializer = NotificationSerializer(notification, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     # TODO: Modularize three creates to reduce repetition 
 
     @action(methods=['post'], detail=False)
