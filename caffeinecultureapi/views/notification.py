@@ -128,6 +128,27 @@ class NotificationView(ViewSet):
         
         serializer = NotificationSerializer(notification, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(methods=['get'], detail=False)
+    def return_notification_count(self, request):
+        # Retrieves UID passed through headers
+        uid = request.META['HTTP_AUTHORIZATION']
+        
+        if not uid:
+            return Response({"error": "Authorization header is missing"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(uid=uid)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        notifications = Notification.objects.filter(user=user).filter(is_read=False)
+        
+        print(notifications)
+        
+        count = len(notifications)
+        
+        return Response({count}, status=status.HTTP_200_OK)
+        
 
     # TODO: Modularize three creates to reduce repetition 
 
@@ -138,11 +159,11 @@ class NotificationView(ViewSet):
             Response: Success message with 204 code
         """
         
-        username = receiver.username
+        username = sender.username
     
         notification = Notification.objects.create(
             is_read = False,
-            user = sender,
+            user = receiver,
             message = message,
             content = username + ' sent you a message!'
         )

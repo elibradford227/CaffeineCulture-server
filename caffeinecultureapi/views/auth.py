@@ -73,3 +73,25 @@ def get_user_by_name(request):
         # Bad login details were provided. So we can't log the user in.
         data = { 'valid': False }
         return Response(data)
+    
+@api_view(['POST'])
+def get_user_by_id(request):
+    
+    id = request.META['HTTP_AUTHORIZATION']
+        
+
+    user = User.objects.get(pk=id)
+    
+    # If authentication was successful, respond with their token
+    if user is not None:
+        data = {
+            'id': user.id,
+            'uid': user.uid,
+            'username': user.username,
+            'bio': user.bio
+        }
+        return Response(data)
+    else:
+        # Bad login details were provided. So we can't log the user in.
+        data = { 'valid': False }
+        return Response(data)
