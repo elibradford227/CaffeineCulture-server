@@ -141,11 +141,13 @@ class NotificationView(ViewSet):
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
         
-        notifications = Notification.objects.filter(user=user).filter(has_read=False)
+        notifications = Notification.objects.filter(user=user).filter(is_read=False)
+        
+        print(notifications)
         
         count = len(notifications)
         
-        return Response({"notification_count": count},  status=status.HTTP_200_OK, context={'request': request})
+        return Response({count}, status=status.HTTP_200_OK)
         
 
     # TODO: Modularize three creates to reduce repetition 
@@ -157,11 +159,11 @@ class NotificationView(ViewSet):
             Response: Success message with 204 code
         """
         
-        username = receiver.username
+        username = sender.username
     
         notification = Notification.objects.create(
             is_read = False,
-            user = sender,
+            user = receiver,
             message = message,
             content = username + ' sent you a message!'
         )
