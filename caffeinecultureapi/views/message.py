@@ -104,6 +104,28 @@ class MessageView(ViewSet):
         
         serializer = MessageSerializer(messages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(methods=['get'], detail=False)
+    def get_users_latest_message(self, request):
+        
+        # Retrieves UID passed through headers
+        uid = request.META['HTTP_AUTHORIZATION']
+        
+        if not uid:
+            return Response({"error": "Authorization header is missing"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            user = User.objects.get(uid=uid)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        latest = Message.objects.filter(sender=user).latest('date')
+        
+        serializer = MessageSerializer(latest, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        
+        
 
 
 class MessageSerializer(serializers.ModelSerializer):
