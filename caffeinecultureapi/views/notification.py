@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import serializers, status
 from caffeinecultureapi.models import Post, User, notification, Notification
+from .helpers import get_user_by_uid
 
 class NotificationView(ViewSet):
     """Level up notification view"""
@@ -99,10 +100,7 @@ class NotificationView(ViewSet):
         if not uid:
             return Response({"error": "Authorization header is missing"}, status=status.HTTP_400_BAD_REQUEST)
         
-        try:
-            user = User.objects.get(uid=uid)
-        except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        user = get_user_by_uid(uid)
         
         
         notifications = Notification.objects.filter(user=user).order_by("-date")
@@ -136,10 +134,8 @@ class NotificationView(ViewSet):
         
         if not uid:
             return Response({"error": "Authorization header is missing"}, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            user = User.objects.get(uid=uid)
-        except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        user = get_user_by_uid(uid)
         
         notifications = Notification.objects.filter(user=user).filter(is_read=False)
         

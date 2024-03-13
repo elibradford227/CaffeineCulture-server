@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from rest_framework import serializers, status
 from .notification import NotificationView
 from caffeinecultureapi.models import Post, User, Message
+from .helpers import get_user_by_uid
 
 class MessageView(ViewSet):
     """Level up message view"""
@@ -114,10 +115,7 @@ class MessageView(ViewSet):
         if not uid:
             return Response({"error": "Authorization header is missing"}, status=status.HTTP_400_BAD_REQUEST)
         
-        try:
-            user = User.objects.get(uid=uid)
-        except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        user = get_user_by_uid(uid)
         
         latest = Message.objects.filter(sender=user).latest('date')
         
