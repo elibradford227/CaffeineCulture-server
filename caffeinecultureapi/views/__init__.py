@@ -7,3 +7,4 @@ from .comment import CommentSerializer
 from .message import MessageView
 from .conversation import ConversationView
 from .notification import NotificationView
+from .helpers import get_user_by_uid
