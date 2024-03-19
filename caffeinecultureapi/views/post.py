@@ -26,7 +26,18 @@ class PostView(ViewSet):
             post.liked = liked
         
         return posts
+    
+    def __get_filtered_posts(self, user, query):
         
+        posts = Post.objects.all()
+        
+        posts = self.__get_posts_likes(posts, user)
+        
+        if query == 'newest':
+            return posts.order_by('-id')
+        else:
+            return posts.order_by('id')
+
 
     def retrieve(self, request, pk):
         """Handle GET requests for single posts
@@ -162,7 +173,7 @@ class PostView(ViewSet):
     
     @action(methods=['get'], detail=False)
     def get_paginated_posts(self, request):
-        """Handle GET requests to get all posts
+        """Handle GET requests to get all paginated posts
 
         Returns:
             Response -- JSON serialized list of posts
@@ -185,6 +196,46 @@ class PostView(ViewSet):
         
         posts =  paginator.page(page)
             
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(methods=['get'], detail=False)
+    def get_filtered_posts(self, request):
+        uid = request.META['HTTP_AUTHORIZATION']
+        
+        query =  request.GET.get('filter', None)
+        
+        if not uid:
+            return Response({"error": "Authorization header is missing"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user = get_user_by_uid(uid)
+
+        posts = self.__get_filtered_posts(user, query)
+        
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(methods=['get'], detail=False)
+    def search_posts(self, request):
+        """Handle GET requests to get all paginated posts
+
+        Returns:
+            Response -- JSON serialized list of posts
+        """
+        # Retrieves UID passed through headers
+        uid = request.META['HTTP_AUTHORIZATION']
+        
+        if not uid:
+            return Response({"error": "Authorization header is missing"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        search =  request.GET.get('search', None)
+        
+        user = get_user_by_uid(uid)
+
+        posts = Post.objects.filter(title__contains=search)
+        
+        posts = self.__get_posts_likes(posts, user)
+        
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
